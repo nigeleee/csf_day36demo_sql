@@ -1,0 +1,66 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-label>Name:</mat-label>
+    <mat-error *ngIf="form.controls['name'].hasError('required')" style="color:red;">Field is required</mat-error>
+    <input matInput type="text" formControlName="name">
+    <mat-icon matSuffix>text_fields</mat-icon>
+  </mat-form-field>
+  <br>
+  <mat-form-field>
+    <mat-label>Email:</mat-label>
+    <mat-error *ngIf="form.controls['email'].hasError('required')" style="color:red;">Field is required</mat-error>
+    <mat-error *ngIf="form.controls['email'].hasError('email')" style="color:red;">Please provide a valid email</mat-error>
+    <input matInput type="email" formControlName="email">
+    <mat-icon matSuffix>mail_outline</mat-icon>
+  </mat-form-field>
+  <section class="checkbox">
+    <mat-checkbox formControlName="express">
+      Express
+    </mat-checkbox>
+  </section>
+  <br>
+  <button mat-raised-button type="submit" color="primary" [disabled]="invalid()">
+    Submit
+  </button>
+  &nbsp;
+  <button mat-raised-button color="accent" (click)="addLineItem()" >
+    <mat-icon>add</mat-icon>
+  </button>
+  <br><br>
+  <mat-divider></mat-divider>
+  <br>
+  <div *ngIf="lineItemsArray.controls.length > 0; else noItems">
+    <ng-container formArrayName="lineItems">
+      <ng-container *ngFor="let li of lineItemsArray.controls; let idx = index" >
+        <ng-container [formGroupName]="idx">
+          <mat-form-field>
+            <mat-label>Item Name</mat-label>
+            <input matInput type="text" formControlName="name">
+            <!-- <mat-error *ngIf="li.errors?.['required']" style="color: red;">Item name is required</mat-error> -->
+            <mat-error *ngIf="li.get('name').hasError('required')" style="color: red;">Item name is required</mat-error>
+
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Quantity</mat-label>
+            <input matInput min="1" type="number" formControlName="quantity">
+            <mat-error *ngIf="li.get('quantity').hasError('required')" style="color: red;">Quantity is required</mat-error>
+            <mat-error *ngIf="li.get('quantity').hasError('min')" style="color: red;">Quantity must be at least 2</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Unit Price</mat-label>
+            <input matInput min="1" step="0.5" type="number" formControlName="unitPrice">
+            <mat-error *ngIf="li.get('unitPrice').hasError('required')" style="color: red;">Unit price is required</mat-error>
+            <mat-error *ngIf="li.get('unitPrice').hasError('min')" style="color: red;">Unit price must be at least 2</mat-error>
+          </mat-form-field>
+          &nbsp;
+          <button mat-raised-button color="warn" (click)="removeLineItem(idx)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-container>
+    </ng-container>
+  </ng-container>
+  </div>
+</form>
+
+<ng-template #noItems>Line items empty</ng-template>
+
